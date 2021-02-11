@@ -1,16 +1,13 @@
 package nettyTest.server;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.sound.sampled.AudioFormat;
-import java.io.*;
-import java.net.SocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 @Getter
 @Setter
@@ -18,6 +15,8 @@ public class Connection {
     private ChannelHandlerContext ctx;
     private PrintWriter printWriter;
     private boolean printOutput = false;
+    private boolean blockOutput = false;
+    private int numberOfBlockedMsg = -1;
     private SystemType.type systemType = SystemType.type.Windows;
 
     public Connection(ChannelHandlerContext ctx) throws IOException {
@@ -26,22 +25,23 @@ public class Connection {
         this.printWriter = new PrintWriter(new FileWriter(fileName));
     }
 
-    public void send(String msg) throws UnsupportedEncodingException {
-       /* byte[] originalBytes = msg.getBytes(); // Here the sequence of bytes representing the UTF-8 encoded string
-        byte[] newBytes = new String(originalBytes, "UTF8").getBytes("Windows-1256");*/
-        byte[] bytes = convertUtfToWindows(msg);
-
-      /*  byte[] iso88591Data = msg.getBytes("ISO-8859-1");
-        byte[] kurwa = msg.getBytes(StandardCharsets.ISO_8859_1);
-        String kurwa1 = new String(kurwa, StandardCharsets.ISO_8859_1);
-        System.out.println(kurwa1);*/
-        ByteBuf byteBuf = Unpooled.copiedBuffer(bytes);
-        this.ctx.channel().writeAndFlush(byteBuf);
+    public void send(String msg) throws UnsupportedEncodingException, InterruptedException {
+        this.ctx.channel().writeAndFlush(msg);
     }
 
     public void write(String msg){
+        if(blockOutput){
+            if(msg.length()==30) {
+                System.out.println("Done!");
+                blockOutput = false;
+            }else {
+                return;
+            }
+        }
         if(printOutput){
-            System.out.printf(msg);
+            try{
+                System.out.printf(msg);
+            }catch (Exception ignored){}
         }
         this.printWriter.write(msg);
         this.printWriter.flush();

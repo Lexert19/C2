@@ -8,9 +8,7 @@ public class TcpChannelHandler extends SimpleChannelInboundHandler<String> {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Connection connection = new Connection(ctx);
         Data.connections.put(ctx.channel().remoteAddress().toString(), connection);
-        System.out.println(ctx.channel().remoteAddress()+" added");
-        Data.activeConnection=connection;
-        connection.setPrintOutput(true);
+        System.out.println(ctx.channel().remoteAddress()+"      added");
     }
 
     @Override

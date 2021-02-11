@@ -8,10 +8,12 @@ public class Listener implements Runnable {
     public void run() {
         Scanner scanner = new Scanner(new InputStreamReader(System.in));
         while (true) {
-            try{
+            try {
                 String command = scanner.nextLine();
                 executeCommand(command);
-            }catch (Exception e){}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
         }
     }
