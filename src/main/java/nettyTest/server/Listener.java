@@ -12,7 +12,9 @@ public class Listener implements Runnable {
                 String command = scanner.nextLine();
                 executeCommand(command);
             } catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                System.out.println("Ctrl+c and Ctrl+d is blocked. You can use /exit");
+                scanner = new Scanner(new InputStreamReader(System.in));
             }
 
         }

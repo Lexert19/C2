@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 @Getter
 @Setter
 public class Connection {
+    private int id;
     private ChannelHandlerContext ctx;
     private PrintWriter printWriter;
     private boolean printOutput = false;
@@ -19,35 +20,41 @@ public class Connection {
     private int numberOfBlockedMsg = -1;
     private SystemType.type systemType = SystemType.type.Windows;
 
-    public Connection(ChannelHandlerContext ctx) throws IOException {
+    public Connection(ChannelHandlerContext ctx, int id) throws IOException {
         this.ctx = ctx;
-        String fileName = "logs/"+((ctx.channel().remoteAddress().toString()+".txt").substring(1));
+        String fileName = "logs/" + ((ctx.channel().remoteAddress().toString() + ".txt").substring(1));
         this.printWriter = new PrintWriter(new FileWriter(fileName));
+        this.id = id;
     }
 
     public void send(String msg) throws UnsupportedEncodingException, InterruptedException {
         this.ctx.channel().writeAndFlush(msg);
     }
 
-    public void write(String msg){
-        if(blockOutput){
-            if(msg.length()==30) {
+    public void write(String msg) {
+        //System.out.printf(msg);
+        if (blockOutput) {
+            if (msg.charAt(msg.length() - 2) == (char) 0xff) {
                 System.out.println("Done!");
                 blockOutput = false;
             }else {
                 return;
             }
         }
+
         if(printOutput){
-            try{
+            try {
                 System.out.printf(msg);
-            }catch (Exception ignored){}
+            } catch (Exception ignored) {
+            }
         }
+
         this.printWriter.write(msg);
         this.printWriter.flush();
     }
 
-    public void showInfo(){
+
+    public void showInfo() {
         System.out.println(ctx.channel().remoteAddress());
     }
 

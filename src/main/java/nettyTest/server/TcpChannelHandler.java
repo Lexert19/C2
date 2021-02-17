@@ -6,7 +6,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 public class TcpChannelHandler extends SimpleChannelInboundHandler<String> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        Connection connection = new Connection(ctx);
+        Connection connection = new Connection(ctx, Data.lastId);
+        Data.lastId++;
         Data.connections.put(ctx.channel().remoteAddress().toString(), connection);
         System.out.println(ctx.channel().remoteAddress()+"      added");
     }

