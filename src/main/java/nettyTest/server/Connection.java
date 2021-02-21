@@ -19,6 +19,7 @@ public class Connection {
     private boolean blockOutput = false;
     private int numberOfBlockedMsg = -1;
     private SystemType.type systemType = SystemType.type.Windows;
+    private ShellType.type shellType = ShellType.type.powershell;
 
     public Connection(ChannelHandlerContext ctx, int id) throws IOException {
         this.ctx = ctx;

@@ -1,7 +1,7 @@
 package nettyTest.server;
 
 public class SystemType {
-    enum type{
+    public enum type{
         Linux,
         Windows,
         Undefined,
