@@ -1,6 +1,7 @@
 package nettyTest.server.commands;
 
 import nettyTest.server.Data;
+import nettyTest.server.ShellType;
 import nettyTest.server.SystemType;
 
 import java.io.IOException;
@@ -13,7 +14,11 @@ public class Upload {
         //Data.activeConnection.setBlockOutput(true);
 
         if (Data.activeConnection.getSystemType() == SystemType.type.Windows) {
-            UploadWindows.run(args.get(0), args.get(1), Data.activeConnection);
+            if(Data.activeConnection.getShellType() == ShellType.type.powershell){
+                UploadPowershell.run(args.get(0), args.get(1), Data.activeConnection);
+            }else if(Data.activeConnection.getShellType() == ShellType.type.cmd){
+                UploadWindows.run(args.get(0), args.get(1), Data.activeConnection);
+            }
         } else if (Data.activeConnection.getSystemType() == SystemType.type.Linux) {
             UploadLinux.run(args.get(0), args.get(1), Data.activeConnection);
         }

@@ -9,4 +9,5 @@ public class Data {
     public static EventLoop eventLoop;
     public static Connection activeConnection;
     public static int lastId=0;
+    public static int numberOfConnection = 0;
 }

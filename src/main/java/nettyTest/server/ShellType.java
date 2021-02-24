@@ -1,7 +1,7 @@
 package nettyTest.server;
 
 public class ShellType {
-    enum type{
+    public enum type{
         cmd,
         powershell,
         Undefined,
