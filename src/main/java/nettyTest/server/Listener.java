@@ -9,8 +9,10 @@ public class Listener implements Runnable {
         Scanner scanner = new Scanner(new InputStreamReader(System.in));
         while (true) {
             try {
-                String command = scanner.nextLine();
-                executeCommand(command);
+                if(scanner.hasNextLine()){
+                    String command = scanner.nextLine();
+                    executeCommand(command);
+                }
             } catch (Exception e) {
                 //e.printStackTrace();
                 System.out.println("Ctrl+c and Ctrl+d is blocked. You can use /exit");

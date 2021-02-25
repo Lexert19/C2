@@ -52,6 +52,10 @@ public class CommandExecutor implements Runnable {
             Clear.run(command);
         } else if (command.contains("/exit")) {
             Exit.run(command);
+        }else if(command.contains("/executeScript")){
+            ExecuteScript.run(command);
+        }else if(command.contains("/count")){
+            Count.run();
         }
     }
 }

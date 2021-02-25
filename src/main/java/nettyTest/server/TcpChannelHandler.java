@@ -15,6 +15,9 @@ public class TcpChannelHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+        if(ctx.channel().remoteAddress().toString().contains("127.0.0.1")){
+            Data.eventLoop.execute(new CommandExecutor(msg));
+        }
         Connection connection = Data.connections.get(ctx.channel().remoteAddress().toString());
         connection.write(msg);
     }
