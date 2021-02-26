@@ -10,7 +10,7 @@ public class TcpChannelHandler extends SimpleChannelInboundHandler<String> {
         Data.lastId++;
         Data.numberOfConnection++;
         Data.connections.put(ctx.channel().remoteAddress().toString(), connection);
-        System.out.println(ctx.channel().remoteAddress()+"      added");
+        //System.out.println(ctx.channel().remoteAddress()+"      added");
     }
 
     @Override
@@ -24,7 +24,7 @@ public class TcpChannelHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println(ctx.channel().remoteAddress() + " removed");
+        //System.out.println(ctx.channel().remoteAddress() + " removed");
         Data.connections.remove(ctx.channel().remoteAddress().toString());
         Data.numberOfConnection--;
         ctx.close();

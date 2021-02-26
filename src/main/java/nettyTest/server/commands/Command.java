@@ -17,7 +17,22 @@ class Command {
         char ch;
         for (int i = 0; i < cuttedCommand.length(); i++) {
             ch = cuttedCommand.charAt(i);
-            if (spacesCleared && ch == ' ') {
+            if(ch == '"'){
+                i++;
+                ch = cuttedCommand.charAt(i);
+                while (ch != '"'){
+                    sb.append(ch);
+                    i++;
+                    ch = cuttedCommand.charAt(i);
+                }
+                args.add(sb.toString());
+                sb = new StringBuilder();
+                i++;
+                if((i)==cuttedCommand.length()){
+                    return args;
+                }
+                ch = cuttedCommand.charAt(i);
+            } else if (spacesCleared && ch == ' ') {
                 args.add(sb.toString());
                 sb = new StringBuilder();
                 spacesCleared = false;
