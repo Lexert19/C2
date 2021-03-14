@@ -40,6 +40,8 @@ public class CommandExecutor implements Runnable {
             Upload.run(command);
         } else if (command.contains("/background")) {
             Background.run(command);
+        }else if(command.contains("/testConnections")){
+            TestConnections.run();
         } else if (command.contains("/test")) {
             Test.run(command);
         } else if (command.contains("/loadTools")) {
