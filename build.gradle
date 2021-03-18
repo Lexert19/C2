@@ -33,7 +33,7 @@ jar {
 
 task customFatJar(type: Jar) {
     manifest {
-        attributes 'Main-Class': 'nettyTest.server.Start'
+        attributes 'Main-Class': 'netty.server.Start'
     }
     //baseName = 'all-in-one-jar'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }

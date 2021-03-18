@@ -19,12 +19,13 @@ public class Connection {
     private boolean printOutput = false;
     private boolean blockOutput = false;
     private int numberOfBlockedMsg = -1;
-    private boolean saveOutput = false;
+    private boolean saveOutput;
     private SystemType.type systemType = SystemType.type.Windows;
     private ShellType.type shellType = ShellType.type.powershell;
 
-    public Connection(ChannelHandlerContext ctx, int id) throws IOException {
+    public Connection(ChannelHandlerContext ctx, int id, boolean saveOutput) throws IOException {
         this.ctx = ctx;
+        this.saveOutput = saveOutput;
         if(this.saveOutput){
             String fileName = "logs/" + ((ctx.channel().remoteAddress().toString() + ".txt").substring(1));
             this.printWriter = new PrintWriter(new FileWriter(fileName));
@@ -63,9 +64,7 @@ public class Connection {
 
 
     public void showInfo() {
-        if(alive){
-            System.out.println(ctx.channel().remoteAddress());
-        }
+        System.out.println(ctx.channel().remoteAddress());
     }
 
     private byte[] convertUtfToWindows(String msg) throws UnsupportedEncodingException {

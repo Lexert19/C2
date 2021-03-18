@@ -26,39 +26,41 @@ public class CommandExecutor implements Runnable {
                 return;
             }
         }
-        if (command.contains("/sendToAll")) {
+
+        command+=" ";
+        if (command.contains("/sendToAll ")) {
             SendToAll.run(command);
-        } else if (command.contains("/connections")) {
+        } else if (command.contains("/connections ")) {
             Connections.run(command);
-        } else if (command.contains("/sendTo")) {
+        } else if (command.contains("/sendTo ")) {
             SendTo.run(command);
-        } else if (command.contains("/showOutput")) {
+        } else if (command.contains("/showOutput ")) {
             ShowOutput.run(command);
-        } else if (command.contains("/connect")) {
+        } else if (command.contains("/connect ")) {
             Connect.run(command);
-        } else if (command.contains("/upload")) {
+        } else if (command.contains("/upload ")) {
             Upload.run(command);
-        } else if (command.contains("/background")) {
+        } else if (command.contains("/background ")) {
             Background.run(command);
-        }else if(command.contains("/testConnections")){
+        }else if(command.contains("/testConnections ")){
             TestConnections.run();
-        } else if(command.contains("/tests")){
+        } else if(command.contains("/tests ")){
             Tests.run(command);
-        } else if (command.contains("/test")) {
+        } else if (command.contains("/test ")) {
             Test.run(command);
-        } else if (command.contains("/loadTools")) {
+        } else if (command.contains("/loadTools ")) {
             LoadTools.run(command);
-        } else if (command.contains("/help")) {
+        } else if (command.contains("/help ")) {
             Help.run(command);
-        } else if (command.contains("/uploadToAll")) {
+        } else if (command.contains("/uploadToAll ")) {
             UploadToAll.run(command);
-        } else if (command.contains("/clear")) {
+        } else if (command.contains("/clear ")) {
             Clear.run(command);
-        } else if (command.contains("/exit")) {
+        } else if (command.contains("/exit ")) {
             Exit.run(command);
-        }else if(command.contains("/executeScript")){
+        }else if(command.contains("/executeScript ")){
             ExecuteScript.run(command);
-        }else if(command.contains("/count")){
+        }else if(command.contains("/count ")){
             Count.run();
         }
     }
