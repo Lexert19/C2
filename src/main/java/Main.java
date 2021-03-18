@@ -1,12 +1,4 @@
-import nettyTest.server.Data;
-
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class Main {
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
