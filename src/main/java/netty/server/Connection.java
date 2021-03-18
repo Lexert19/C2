@@ -13,18 +13,22 @@ import java.io.UnsupportedEncodingException;
 @Setter
 public class Connection {
     private int id;
+    private boolean alive = true;
     private ChannelHandlerContext ctx;
     private PrintWriter printWriter;
     private boolean printOutput = false;
     private boolean blockOutput = false;
     private int numberOfBlockedMsg = -1;
+    private boolean saveOutput = false;
     private SystemType.type systemType = SystemType.type.Windows;
     private ShellType.type shellType = ShellType.type.powershell;
 
     public Connection(ChannelHandlerContext ctx, int id) throws IOException {
         this.ctx = ctx;
-        String fileName = "logs/" + ((ctx.channel().remoteAddress().toString() + ".txt").substring(1));
-        this.printWriter = new PrintWriter(new FileWriter(fileName));
+        if(this.saveOutput){
+            String fileName = "logs/" + ((ctx.channel().remoteAddress().toString() + ".txt").substring(1));
+            this.printWriter = new PrintWriter(new FileWriter(fileName));
+        }
         this.id = id;
     }
 
@@ -33,6 +37,7 @@ public class Connection {
     }
 
     public void write(String msg) {
+        alive = true;
         //System.out.printf(msg);
         if (blockOutput) {
             if (msg.charAt(msg.length() - 2) == (char) 0xff) {
@@ -50,13 +55,17 @@ public class Connection {
             }
         }
 
-        this.printWriter.write(msg);
-        this.printWriter.flush();
+        if(saveOutput){
+            this.printWriter.write(msg);
+            this.printWriter.flush();
+        }
     }
 
 
     public void showInfo() {
-        System.out.println(ctx.channel().remoteAddress());
+        if(alive){
+            System.out.println(ctx.channel().remoteAddress());
+        }
     }
 
     private byte[] convertUtfToWindows(String msg) throws UnsupportedEncodingException {

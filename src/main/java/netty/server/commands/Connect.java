@@ -12,12 +12,18 @@ public class Connect {
         Connection connection;
         try {
             connection = Data.connections.get(args.get(0));
+            if(!connection.isAlive()){
+                throw new Exception();
+            }
             connection.setPrintOutput(true);
             Data.activeConnection = connection;
             System.out.println("connected to " + args.get(0));
         } catch (Exception e) {
             try {
                 connection = Data.connections.values().iterator().next();
+                if(!connection.isAlive()){
+                    throw new Exception();
+                }
                 connection.setPrintOutput(true);
                 Data.activeConnection = connection;
                 System.out.println("Connected to the first connection");

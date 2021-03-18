@@ -1,14 +1,26 @@
 package netty.server.commands;
 
+import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import netty.server.Connection;
 import netty.server.Data;
 
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.TimeUnit;
 
 public class TestConnections {
     public static void run() throws UnsupportedEncodingException, InterruptedException {
         for (Connection connection : Data.connections.values()) {
-            connection.send(":\n");
+            connection.setAlive(false);
+            connection.getCtx().writeAndFlush("\n");
+            connection.getCtx().executor().schedule(new Runnable() {
+                @Override
+                public void run() {
+                    if(!connection.isAlive()){
+                        connection.getCtx().close();
+                    }
+                }
+            },7,TimeUnit.SECONDS);
         }
+
     }
 }

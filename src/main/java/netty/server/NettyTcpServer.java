@@ -18,7 +18,7 @@ public class NettyTcpServer {
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new TcpChannelInitializer())
-                    .childOption(ChannelOption.SO_KEEPALIVE, true);
+                    .childOption(ChannelOption.SO_KEEPALIVE, false);
 
             ChannelFuture f = b.bind(port).sync();
 

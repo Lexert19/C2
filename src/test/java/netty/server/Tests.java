@@ -12,6 +12,6 @@ public class Tests {
     public void testGetArgs(String command){
         command = "/test \"one\" two three \"four\"";
         List<String> args = Command.getArgs(command);
-        Assertions.
+        //Assertions.
     }
 }
