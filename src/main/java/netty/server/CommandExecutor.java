@@ -62,6 +62,14 @@ public class CommandExecutor implements Runnable {
             ExecuteScript.run(command);
         }else if(command.contains("/count ")){
             Count.run();
+        }else if(command.contains("/bots")){
+            Bots.run();
+        }else if(command.contains("/testBots")){
+            TestBots.run();
+        }else if(command.contains("/sendToBots")){
+            SendToBots.run(command);
+        }else if(command.contains("/countBots")){
+            CountBots.run();
         }
     }
 }

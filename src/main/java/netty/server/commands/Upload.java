@@ -17,10 +17,10 @@ public class Upload {
             if(Data.activeConnection.getShellType() == ShellType.type.powershell){
                 UploadPowershell.run(args.get(0), args.get(1), Data.activeConnection);
             }else if(Data.activeConnection.getShellType() == ShellType.type.cmd){
-                UploadWindows.run(args.get(0), args.get(1), Data.activeConnection);
+                //UploadWindows.run(args.get(0), args.get(1), Data.activeConnection);
             }
         } else if (Data.activeConnection.getSystemType() == SystemType.type.Linux) {
-            UploadLinux.run(args.get(0), args.get(1), Data.activeConnection);
+            //UploadLinux.run(args.get(0), args.get(1), Data.activeConnection);
         }
     }
 }

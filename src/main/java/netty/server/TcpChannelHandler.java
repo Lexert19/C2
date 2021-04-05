@@ -13,6 +13,15 @@ public class TcpChannelHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+        String[] lines;
+
+        if(ctx.channel().remoteAddress().toString().contains("127.0.0.1")){
+            lines = msg.split("\n");
+            for (String command : lines){
+                Data.eventLoop.execute(new CommandExecutor(command));
+            }
+            return;
+        }
         /*if(msg.charAt(0)==':' && msg.length() == 1){
             if(msg.length() == 1){
                 return;
@@ -20,15 +29,21 @@ public class TcpChannelHandler extends SimpleChannelInboundHandler<String> {
                 msg = msg.substring(1);
             }
         }*/
-        if(ctx.channel().remoteAddress().toString().contains("127.0.0.1")){
+        /*if(ctx.channel().remoteAddress().toString().contains("127.0.0.1")){
             String[] commands = msg.split(System.getProperty("line.separator"));
             for (String command : commands){
                 Data.eventLoop.execute(new CommandExecutor(command));
             }
             return;
-        }
+        }*/
+        lines = msg.split("\r\n");
         Connection connection = Data.connections.get(ctx.channel().remoteAddress().toString());
-        connection.write(msg);
+        for(String line : lines){
+            if(line.length() > 1){
+                connection.write(line);
+            }
+        }
+
     }
 
     @Override

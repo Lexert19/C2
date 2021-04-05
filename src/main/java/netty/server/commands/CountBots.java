@@ -2,8 +2,8 @@ package netty.server.commands;
 
 import netty.server.Data;
 
-public class Count {
+public class CountBots {
     public static void run(){
-        System.out.println(Data.connections.size());
+        System.out.println(Data.bots.size());
     }
 }

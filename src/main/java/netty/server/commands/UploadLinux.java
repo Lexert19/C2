@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 
 public class UploadLinux {
     public static void run(String fileName, String fileDestination, Connection connection) throws IOException, InterruptedException {
-        Data.activeConnection.getCtx().channel().writeAndFlush("> " + fileDestination + "" + "\n");
+       /* Data.activeConnection.getCtx().channel().writeAndFlush("> " + fileDestination + "" + "\n");
 
         FileInputStream file = new FileInputStream(fileName);
         BufferedReader reader = new BufferedReader(new InputStreamReader(file));
@@ -32,7 +32,7 @@ public class UploadLinux {
         if (sb.length() > 0) {
             Data.activeConnection.send("echo -n \"" + sb.toString() + "\" >> " + fileDestination + "" + "\n");
         }
-        reader.close();
+        reader.close();*/
     }
 
 }
