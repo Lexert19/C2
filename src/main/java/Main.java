@@ -1,7 +1,7 @@
 import java.io.*;
 
 public class Main {
-    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+   /* private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
@@ -10,12 +10,14 @@ public class Main {
             hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
         return new String(hexChars);
-    }
+    }*/
 
     public static void main(String[] args) throws IOException {
-        byte[] bytes = {00, 01, 02};
+        int a = System.in.read();
+        System.out.println(a);
+      /*  byte[] bytes = {00, 01, 02};
         String str = bytesToHex(bytes);
-        System.out.println(str);
+        System.out.println(str);*/
     }
 
 

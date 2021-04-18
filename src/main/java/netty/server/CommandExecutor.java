@@ -20,7 +20,7 @@ public class CommandExecutor implements Runnable {
     }
 
     private void interpretCommand(String command) throws IOException, InterruptedException {
-        if (command.length() > 1) {
+        if (command.length() >= 1) {
             if (command.charAt(0) != '/') {
                 SendToCurrentConnection.run(command);
                 return;
@@ -62,13 +62,13 @@ public class CommandExecutor implements Runnable {
             ExecuteScript.run(command);
         }else if(command.contains("/count ")){
             Count.run();
-        }else if(command.contains("/bots")){
+        }else if(command.contains("/bots ")){
             Bots.run();
-        }else if(command.contains("/testBots")){
+        }else if(command.contains("/testBots ")){
             TestBots.run();
-        }else if(command.contains("/sendToBots")){
+        }else if(command.contains("/sendToBots ")){
             SendToBots.run(command);
-        }else if(command.contains("/countBots")){
+        }else if(command.contains("/cb ")){
             CountBots.run();
         }
     }

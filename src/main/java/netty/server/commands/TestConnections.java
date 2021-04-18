@@ -11,7 +11,7 @@ public class TestConnections {
     public static void run() throws UnsupportedEncodingException, InterruptedException {
         for (Connection connection : Data.connections.values()) {
             connection.setAlive(false);
-            connection.getCtx().writeAndFlush("\n");
+            connection.getCtx().writeAndFlush("\r\n");
             connection.getCtx().executor().schedule(new Runnable() {
                 @Override
                 public void run() {

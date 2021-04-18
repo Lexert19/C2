@@ -38,8 +38,9 @@ public class TcpChannelHandler extends SimpleChannelInboundHandler<String> {
         }*/
         lines = msg.split("\r\n");
         Connection connection = Data.connections.get(ctx.channel().remoteAddress().toString());
+        connection.setAlive(true);
         for(String line : lines){
-            if(line.length() > 1){
+            if(line.length() >= 1){
                 connection.write(line);
             }
         }
@@ -49,13 +50,14 @@ public class TcpChannelHandler extends SimpleChannelInboundHandler<String> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Data.connections.remove(ctx.channel().remoteAddress().toString());
+        Data.bots.remove(ctx.channel().remoteAddress().toString());
         ctx.close();
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         //super.exceptionCaught(ctx, cause);
-        System.out.println(cause.getLocalizedMessage());
+        //System.out.println(cause.getLocalizedMessage());
         ctx.close();
     }
 }
