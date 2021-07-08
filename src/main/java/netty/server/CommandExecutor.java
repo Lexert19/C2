@@ -27,7 +27,7 @@ public class CommandExecutor implements Runnable {
             }
         }
 
-        command+=" ";
+        command += " ";
         if (command.contains("/sendToAll ")) {
             SendToAll.run(command);
         } else if (command.contains("/connections ")) {
@@ -38,38 +38,34 @@ public class CommandExecutor implements Runnable {
             ShowOutput.run(command);
         } else if (command.contains("/connect ")) {
             Connect.run(command);
-        } else if (command.contains("/upload ")) {
-            Upload.run(command);
         } else if (command.contains("/background ")) {
             Background.run(command);
-        }else if(command.contains("/testConnections ")){
+        } else if (command.contains("/testConnections ")) {
             TestConnections.run();
-        } else if(command.contains("/tests ")){
+        } else if (command.contains("/tests ")) {
             Tests.run(command);
         } else if (command.contains("/test ")) {
             Test.run(command);
-        } else if (command.contains("/loadTools ")) {
-            LoadTools.run(command);
         } else if (command.contains("/help ")) {
             Help.run(command);
-        } else if (command.contains("/uploadToAll ")) {
-            UploadToAll.run(command);
         } else if (command.contains("/clear ")) {
             Clear.run(command);
         } else if (command.contains("/exit ")) {
             Exit.run(command);
-        }else if(command.contains("/executeScript ")){
+        } else if (command.contains("/executeScript ")) {
             ExecuteScript.run(command);
-        }else if(command.contains("/count ")){
+        } else if (command.contains("/count ")) {
             Count.run();
-        }else if(command.contains("/bots ")){
+        } else if (command.contains("/bots ")) {
             Bots.run();
-        }else if(command.contains("/testBots ")){
+        } else if (command.contains("/testBots ")) {
             TestBots.run();
-        }else if(command.contains("/sendToBots ")){
+        } else if (command.contains("/sendToBots ")) {
             SendToBots.run(command);
-        }else if(command.contains("/cb ")){
+        } else if (command.contains("/cb ")) {
             CountBots.run();
+        } else if (command.contains("/download ")) {
+
         }
     }
 }

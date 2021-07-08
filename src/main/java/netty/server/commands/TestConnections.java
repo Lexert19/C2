@@ -1,6 +1,5 @@
 package netty.server.commands;
 
-import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import netty.server.Connection;
 import netty.server.Data;
 

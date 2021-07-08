@@ -3,6 +3,7 @@ package netty.server;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+
 public class TcpChannelHandler extends SimpleChannelInboundHandler<String> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -22,20 +23,8 @@ public class TcpChannelHandler extends SimpleChannelInboundHandler<String> {
             }
             return;
         }
-        /*if(msg.charAt(0)==':' && msg.length() == 1){
-            if(msg.length() == 1){
-                return;
-            }else {
-                msg = msg.substring(1);
-            }
-        }*/
-        /*if(ctx.channel().remoteAddress().toString().contains("127.0.0.1")){
-            String[] commands = msg.split(System.getProperty("line.separator"));
-            for (String command : commands){
-                Data.eventLoop.execute(new CommandExecutor(command));
-            }
-            return;
-        }*/
+
+
         lines = msg.split("\r\n");
         Connection connection = Data.connections.get(ctx.channel().remoteAddress().toString());
         connection.setAlive(true);

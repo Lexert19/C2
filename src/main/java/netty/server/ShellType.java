@@ -1,9 +1,8 @@
 package netty.server;
 
-public class ShellType {
-    public enum type{
-        cmd,
-        powershell,
-        Undefined,
-    }
+public enum ShellType {
+    cmd,
+    powershell,
+    connector2,
+    Undefined,
 }

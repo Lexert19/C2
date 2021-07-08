@@ -20,7 +20,7 @@ public class Connect {
             System.out.println("connected to " + args.get(0));
         } catch (Exception e) {
             try {
-                connection = Data.connections.values().iterator().next();
+                connection = Data.bots.values().iterator().next();
                 if(!connection.isAlive()){
                     throw new Exception();
                 }
